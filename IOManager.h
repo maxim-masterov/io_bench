@@ -41,10 +41,11 @@ public:
 
 class IOManager {
 public:
-    explicit IOManager(const std::string& _file_base_name) {
+    explicit IOManager(const std::string& _file_base_name, const size_t _buf_size = 1) {
         file_base_name = _file_base_name;
         file_ext_ascii = "dat";
         file_ext_binary = "bin";
+        buf_size = _buf_size;
     }
     ~IOManager() = default;
 
@@ -174,14 +175,18 @@ private:
         return EXIT_SUCCESS;
     }
 
-    static int write_binary(const std::string& filename, const Vector<double> &vec) {
+    int write_binary(const std::string& filename, const Vector<double> &vec) {
 
         std::ofstream out;
         out.open(filename, std::ios::out | std::ios::binary);
 
         if (out.is_open()) {
-            for (auto v: vec.getContainer()) {
-                out.write((char*) &v, sizeof(double ));
+            std::vector<double> buffer(buf_size, 0.0);
+            for(size_t n = 0; n < vec.getContainer().size(); n+=buf_size) {
+                std::copy(vec.getContainer().begin() + n,
+                          vec.getContainer().begin() + n + buf_size,
+                          buffer.begin());
+                out.write((char *) &buffer[0], sizeof(double) * buf_size);
             }
             out.close();
         } else {
@@ -209,14 +214,19 @@ private:
         return EXIT_SUCCESS;
     }
 
-    static int read_binary(const std::string& filename, Vector<double> &vec) {
+    int read_binary(const std::string& filename, Vector<double> &vec) {
 
         std::ifstream in;
         in.open(filename, std::ios::in | std::ios::binary);
 
         if (in.is_open()) {
-            for (auto &v: vec.getContainer()) {
-                in.read((char*) &v, sizeof(double ));
+            std::vector<double> buffer(buf_size, 0.0);
+            size_t counter = 0;
+            for(size_t n = 0; n < vec.getContainer().size(); n+=buf_size) {
+                in.read((char *) &buffer[0], sizeof(double) * buf_size);
+                std::copy(buffer.begin(), buffer.end(),
+                          vec.getContainer().begin() + counter);
+                counter += buf_size;
             }
             in.close();
         } else {
@@ -230,6 +240,7 @@ private:
     std::string file_base_name;
     std::string file_ext_ascii;
     std::string file_ext_binary;
+    size_t buf_size;
 };
 
 

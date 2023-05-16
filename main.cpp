@@ -8,7 +8,7 @@ int main(int argv, char **argc) {
     size_t vec_size = 100;
     Results results_wb, results_wa;
     Results results_rb, results_ra;
-    IOManager io_manager("test");
+    IOManager io_manager("test", 100);
 
     if (argv == 2) {
         vec_size = std::stoi(argc[1]);
