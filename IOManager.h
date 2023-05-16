@@ -33,9 +33,9 @@ public:
     }
 
     inline void print() const {
-        std::cout << "  Elapsed time: " << elp_time << "ms" << "\n";
-        std::cout << "  File size:    " << file_size << "B" << "\n";
-        std::cout << "  Speed:        " << speed << "MB/s" << "\n";
+        std::cout << "  Elapsed time: " << elp_time << " ms" << "\n";
+        std::cout << "  File size:    " << file_size << " B" << "\n";
+        std::cout << "  Speed:        " << speed << " MB/s" << "\n";
     }
 };
 
