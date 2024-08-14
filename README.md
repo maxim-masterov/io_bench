@@ -2,7 +2,8 @@
 
 ## Usage
 ```bash
-$ cmake .
+$ mkdir build && cd build
+$ cmake ..
 $ make
 $ ./IO_bench 10000000
 ```
